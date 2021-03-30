@@ -28,17 +28,6 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
         T: Modular<T>,
         T: LowerHex,
     {
-        // define buffer
-        //let mut block = [0; BLOCKSIZE];
-
-        //let mut handle = file.take(blocksize as u64);
-
-        // uses a reader buffer
-        //let mut reader = BufReader::new(file);
-        // let mut line = String::new();
-
-        // set initialization vector
-        //let mut hash = Hash256::initialization_vector();
         let mut last_bytes_read = 0usize;
 
         loop {
@@ -46,8 +35,6 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
                 Ok(bytes_read) => {
                     // EOF: save last file address to restart from this address for next run
                     if bytes_read == 0 {
-                        //println!("byes_read={}", bytes_read);
-
                         // the message is a multiple of BLOCKSIZE. It still need to be padded
                         if last_bytes_read == BLOCKSIZE {
                             let _ = self.block_padding(0, message_length);
@@ -56,7 +43,6 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
 
                         break;
                     }
-                    //println!("bytes_read={}", bytes_read);
 
                     last_bytes_read = bytes_read;
 
@@ -81,7 +67,6 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
                     }
                 }
                 Err(err) => {
-                    //println!("error={:?}", err);
                     return Err(err);
                 }
             };
