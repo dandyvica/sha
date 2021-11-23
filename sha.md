@@ -38,7 +38,7 @@ Taking into account all those common features, we can define a SHA hash as:
 pub struct Hash<T, const BLOCKSIZE: usize, const ROUNDS: usize> {
     pub k_constants: [T; ROUNDS],   // ROUNDS = 64 or 80
     pub hash: [T; 8],
-    pub scramble_funcs: ScramblePool<T>, // scrambling functions sigma etc
+    pub scramble_funcs: ScramblePool<T>, // scrambling functions σ etc
     pub block: [u8; BLOCKSIZE], // BLOCKSIZE = 64 or 128
 }
 ```
@@ -49,14 +49,14 @@ This terminology is not found in any NIST paper but I found it useful to name th
 * Ch(x,y,z) = (x & y) ^ (!x & z)
 * Maj(x,y,z) = (x & y) ^ (x & z) ^ (y & z)
 * Σ0 and Σ1 are the same, but with different shift values
-* σ0 and σ1 are the same, but with different shift values
+* Σ0 and Σ1 are the same, but with different shift values
 
 Using const generics, we can define those function generically, for *u32* or *u64* types but also for shifting values:
 
 ```rust
-    // SIGMA(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ RotR(X,C)
+    // Σ(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ RotR(X,C)
     #[allow(non_snake_case)]
-    pub fn SIGMA<const A: u8, const B: u8, const C: u8>(x: T) -> T
+    pub fn Σ<const A: u8, const B: u8, const C: u8>(x: T) -> T
     where
         T: BitAnd<Output = T>,
         T: BitXor<Output = T>,
@@ -66,9 +66,9 @@ Using const generics, we can define those function generically, for *u32* or *u6
         x.right_rotate(A) ^ x.right_rotate(B) ^ x.right_rotate(C)
     }
 
-    // sigma(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ X >> C
+    // σ(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ X >> C
     #[allow(non_snake_case)]
-    pub fn sigma<const A: u8, const B: u8, const C: u8>(x: T) -> T
+    pub fn σ<const A: u8, const B: u8, const C: u8>(x: T) -> T
     where
         T: Shr<Output = T>,
         T: BitXor<Output = T>,
@@ -89,10 +89,10 @@ The scrambling functions are then gathered into a generic structure:
 pub struct ScramblePool<T> {
     pub ch: FnScramble3<T>,
     pub maj: FnScramble3<T>,
-    pub sigma0: FnScramble1<T>,
-    pub sigma1: FnScramble1<T>,
-    pub SIGMA0: FnScramble1<T>,
-    pub SIGMA1: FnScramble1<T>,
+    pub σ0: FnScramble1<T>,
+    pub σ1: FnScramble1<T>,
+    pub Σ0: FnScramble1<T>,
+    pub Σ1: FnScramble1<T>,
 }
 ```
 
@@ -124,10 +124,10 @@ impl Hash<u32, 64, 64> {
             scramble_funcs: ScramblePool::<u32> {
                 ch: Scramble::<u32>::Ch,
                 maj: Scramble::<u32>::Maj,
-                sigma0: Scramble::<u32>::sigma::<7, 18, 3>,
-                sigma1: Scramble::<u32>::sigma::<17, 19, 10>,
-                SIGMA0: Scramble::<u32>::SIGMA::<2, 13, 22>,
-                SIGMA1: Scramble::<u32>::SIGMA::<6, 11, 25>,
+                σ0: Scramble::<u32>::σ::<7, 18, 3>,
+                σ1: Scramble::<u32>::σ::<17, 19, 10>,
+                Σ0: Scramble::<u32>::Σ::<2, 13, 22>,
+                Σ1: Scramble::<u32>::Σ::<6, 11, 25>,
             },
             block: [0u8; 64],
         }

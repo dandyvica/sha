@@ -18,10 +18,10 @@ impl Hash<u32, 64, 64> {
             scramble_funcs: ScramblePool::<u32> {
                 ch: Scramble::<u32>::Ch,
                 maj: Scramble::<u32>::Maj,
-                sigma0: Scramble::<u32>::sigma::<7, 18, 3>,
-                sigma1: Scramble::<u32>::sigma::<17, 19, 10>,
-                SIGMA0: Scramble::<u32>::SIGMA::<2, 13, 22>,
-                SIGMA1: Scramble::<u32>::SIGMA::<6, 11, 25>,
+                σ0: Scramble::<u32>::σ::<7, 18, 3>,
+                σ1: Scramble::<u32>::σ::<17, 19, 10>,
+                Σ0: Scramble::<u32>::Σ::<2, 13, 22>,
+                Σ1: Scramble::<u32>::Σ::<6, 11, 25>,
             },
             block: [0u8; 64],
         }

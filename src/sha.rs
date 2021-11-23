@@ -11,7 +11,7 @@ use crate::scramble::ScramblePool;
 pub struct Hash<T, const BLOCKSIZE: usize, const ROUNDS: usize> {
     pub k_constants: [T; ROUNDS],   // ROUNDS = 64 or 80
     pub hash: [T; 8],
-    pub scramble_funcs: ScramblePool<T>, // scrambling functions sigma etc
+    pub scramble_funcs: ScramblePool<T>, // scrambling functions σ etc
     pub block: [u8; BLOCKSIZE], // BLOCKSIZE = 64 or 128
 }
 
@@ -98,9 +98,9 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
 
         // remaining words are given by a formula
         for i in 16..ROUNDS {
-            let s1 = w[i - 7].add_modulo((self.scramble_funcs.sigma1)(w[i - 2]));
-            let s2 = s1.add_modulo((self.scramble_funcs.sigma0)(w[i - 15]));
-            //w[i] = sigma1(w[i - 2]) + w[i - 7] + sigma0(w[i - 15]) + w[i - 16];
+            let s1 = w[i - 7].add_modulo((self.scramble_funcs.σ1)(w[i - 2]));
+            let s2 = s1.add_modulo((self.scramble_funcs.σ0)(w[i - 15]));
+            //w[i] = σ1(w[i - 2]) + w[i - 7] + σ0(w[i - 15]) + w[i - 16];
             w[i] = s2.add_modulo(w[i - 16]);
         }
 
@@ -135,13 +135,13 @@ impl<T, const BLOCKSIZE: usize, const ROUNDS: usize> Hash<T, BLOCKSIZE, ROUNDS> 
 
         // 64 rounds
         for i in 0..ROUNDS {
-            let s1 = h.add_modulo((self.scramble_funcs.SIGMA1)(e));
+            let s1 = h.add_modulo((self.scramble_funcs.Σ1)(e));
             let s2 = s1.add_modulo((self.scramble_funcs.ch)(e, f, g));
             let s3 = s2.add_modulo(self.k_constants[i]);
             let T1 = s3.add_modulo(W[i]);
             //let T1 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];
 
-            let T2 = (self.scramble_funcs.SIGMA0)(a).add_modulo((self.scramble_funcs.maj)(a, b, c));
+            let T2 = (self.scramble_funcs.Σ0)(a).add_modulo((self.scramble_funcs.maj)(a, b, c));
 
             h = g;
             g = f;

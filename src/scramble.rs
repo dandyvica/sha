@@ -58,9 +58,9 @@ impl<T> Scramble<T> {
         (x & y) ^ (x & z) ^ (y & z)
     }
 
-    // SIGMA(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ RotR(X,C)
+    // Σ(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ RotR(X,C)
     #[allow(non_snake_case)]
-    pub fn SIGMA<const A: u8, const B: u8, const C: u8>(x: T) -> T
+    pub fn Σ<const A: u8, const B: u8, const C: u8>(x: T) -> T
     where
         T: BitAnd<Output = T>,
         T: BitXor<Output = T>,
@@ -70,9 +70,9 @@ impl<T> Scramble<T> {
         x.right_rotate(A) ^ x.right_rotate(B) ^ x.right_rotate(C)
     }
 
-    // sigma(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ X >> C
+    // σ(X) = RotR(X,A) ⊕ RotR(X,B) ⊕ X >> C
     #[allow(non_snake_case)]
-    pub fn sigma<const A: u8, const B: u8, const C: u8>(x: T) -> T
+    pub fn σ<const A: u8, const B: u8, const C: u8>(x: T) -> T
     where
         T: Shr<Output = T>,
         T: BitXor<Output = T>,
@@ -87,21 +87,21 @@ impl<T> Scramble<T> {
 pub struct ScramblePool<T> {
     pub ch: FnScramble3<T>,
     pub maj: FnScramble3<T>,
-    pub sigma0: FnScramble1<T>,
-    pub sigma1: FnScramble1<T>,
-    pub SIGMA0: FnScramble1<T>,
-    pub SIGMA1: FnScramble1<T>,
+    pub σ0: FnScramble1<T>,
+    pub σ1: FnScramble1<T>,
+    pub Σ0: FnScramble1<T>,
+    pub Σ1: FnScramble1<T>,
 }
 
 pub trait Scrambler<T> {
-    fn sigma<const A: u8, const B: u8, const C: u8>(&self) -> T
+    fn σ<const A: u8, const B: u8, const C: u8>(&self) -> T
     where
         T: Shifter<T>,
         T: Copy;
 }
 
 impl<T> Scrambler<T> for T {
-    fn sigma<const A: u8, const B: u8, const C: u8>(&self) -> T
+    fn σ<const A: u8, const B: u8, const C: u8>(&self) -> T
     where
         T: Shifter<T>,
         T: Copy,
@@ -158,7 +158,7 @@ mod tests {
         assert_eq!(a ^ b, 0b00111111111110000011111111111000);
         assert_eq!(a ^ b ^ c, 0b00111100000001111100001111111000);
         assert_eq!(
-            Scramble::<u32>::SIGMA::<2, 13, 22>(x),
+            Scramble::<u32>::Σ::<2, 13, 22>(x),
             0b00111100000001111100001111111000
         );
     }
@@ -177,13 +177,13 @@ mod tests {
         assert_eq!(c, 0b00000000011111111111111110000000);
         assert_eq!(a ^ b, 0b00000011111000000000001111100000);
         assert_eq!(
-            Scramble::<u32>::SIGMA::<6, 11, 25>(x),
+            Scramble::<u32>::Σ::<6, 11, 25>(x),
             0b00000011100111111111110001100000
         );
     }
 
     #[test]
-    fn sigma0() {
+    fn σ0() {
         let x: u32 = 0b1111111111111111;
 
         let a = x.rotate_right(7);
@@ -195,13 +195,13 @@ mod tests {
         assert_eq!(a ^ b, 0b11000001111111111100000111111111);
         assert_eq!(c, 0b00000000000000000001111111111111);
         assert_eq!(
-            Scramble::<u32>::sigma::<7, 18, 3>(x),
+            Scramble::<u32>::σ::<7, 18, 3>(x),
             0b11000001111111111101111000000000
         );
     }
 
     #[test]
-    fn sigma1() {
+    fn σ1() {
         let x: u32 = 0b1111111111111111;
 
         let a = x.rotate_right(17);
@@ -213,7 +213,7 @@ mod tests {
         assert_eq!(a ^ b, 0b01100000000000000110000000000000);
         assert_eq!(c, 0b00000000000000000000000000111111);
         assert_eq!(
-            Scramble::<u32>::sigma::<17, 19, 10>(x),
+            Scramble::<u32>::σ::<17, 19, 10>(x),
             0b01100000000000000110000000111111
         );
     }

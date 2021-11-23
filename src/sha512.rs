@@ -24,10 +24,10 @@ impl Hash<u64, 128, 80> {
             scramble_funcs: ScramblePool::<u64> {
                 ch: Scramble::<u64>::Ch,
                 maj: Scramble::<u64>::Maj,
-                sigma0: Scramble::<u64>::sigma::<1, 8, 7>,
-                sigma1: Scramble::<u64>::sigma::<19, 61, 6>,
-                SIGMA0: Scramble::<u64>::SIGMA::<28, 34, 39>,
-                SIGMA1: Scramble::<u64>::SIGMA::<14, 18, 41>,
+                σ0: Scramble::<u64>::σ::<1, 8, 7>,
+                σ1: Scramble::<u64>::σ::<19, 61, 6>,
+                Σ0: Scramble::<u64>::Σ::<28, 34, 39>,
+                Σ1: Scramble::<u64>::Σ::<14, 18, 41>,
             },
             block: [0u8; 128],
         }
